@@ -13,18 +13,30 @@ X = [6.1358, 8.8427, 1;
 [datos, etiquetas] = separarDatos(X);
 % Preprocesar etiquetas
 etiquetas = etiquetas - 1;
-% Preprocesar datos
-datos = mediaCeroVarianza(datos);
 
 MU = mean(datos);
 sigma = std(datos);
+
+% Preprocesar datos
+datos = mediaCeroVarianza(datos);
+
 
 theta = 0.1; % Error maximo
 epsilon = 0.500; % Se usa para determinar la funcion de salida
 tasa = 0.100; % Tasa de aprendizaje 
 EPOCAS = 10; % Epocas maximas
 
-pesosFinales = redNeuronalClasificar(datos, etiquetas, theta, tasa, epsilon, EPOCAS);
+W = redNeuronalClasificar(datos, etiquetas, theta, tasa, epsilon, EPOCAS);
+fprintf("\n\nPesos Finales"); disp(W);
+fprintf("\n\nEcuación de la Red Neuronal\tY = ");
+for i = 1:numel(W)
+    fprintf("%6.3fx%d ", W(i), i - 1);
+end
+fprintf("\nMU: "); disp(MU); fprintf("\nSIGMA: ");
+disp(sigma);
+fprintf("\nw: "); disp(W);
+fprintf("\n");
+
 
 function W = redNeuronalClasificar(X, etiquetas, theta, tasa, epsilon, epocas)
     % Esto se debe de calcular aletoriamente
@@ -37,11 +49,11 @@ function W = redNeuronalClasificar(X, etiquetas, theta, tasa, epsilon, epocas)
     n = numel(X(:, 1));
     
     for i=1:n
-       [W, rmse ] = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i);
+       W = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i);
     end
 end
 
-function [ W, rmse ] = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i)
+function W = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i)
     nCol = numel(X(1, :));
     % Menos datos que los pesos se significa que se debe de hacer x = 1
     nPesos = numel(W);
