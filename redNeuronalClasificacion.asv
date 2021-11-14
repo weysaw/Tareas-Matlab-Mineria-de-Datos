@@ -26,7 +26,7 @@ EPOCAS = 10; % Epocas maximas
 
 pesosFinales = redNeuronalClasificar(datos, etiquetas, theta, tasa, epsilon, EPOCAS);
 
-function W = redNeuronalClasificar(X, etiquetas, theta, tasa, epsilon, epocas)
+function pesosFinales = redNeuronalClasificar(X, etiquetas, theta, tasa, epsilon, epocas)
     % Esto se debe de calcular aletoriamente
     W = [ 0.688, 0.614, 2.334 ];
     %pesosIniciales = rand([1, 3], 1, 5);
@@ -36,12 +36,12 @@ function W = redNeuronalClasificar(X, etiquetas, theta, tasa, epsilon, epocas)
     disp(W);
     n = numel(X(:, 1));
     
-    for i=1:n
-       [W, rmse ] = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i);
+    for i=1:1
+       [pesosFinales, rmse ] = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i);
     end
 end
 
-function [ W, rmse ] = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i)
+function [ pesosFinales, mse ] = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i)
     nCol = numel(X(1, :));
     % Menos datos que los pesos se significa que se debe de hacer x = 1
     nPesos = numel(W);
@@ -49,14 +49,14 @@ function [ W, rmse ] = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i)
     nuevaCol = ones(n, (nPesos - nCol));
     X = [nuevaCol, X]; 
     errores = zeros(n, 1);
-    fprintf("**********Epoca %d**********\n\ni\t\t", i);
+    fprintf("**********Epoca %d**********\n\ni\t", i);
     for j = 0:nPesos-1
-        fprintf("x%d\t\t", j);
+        fprintf("x%d\t", j);
     end
     for j = 0:nPesos-1
-        fprintf("w%d\t\t", j);
+        fprintf("w%d\t", j);
     end
-    fprintf("Z\tY\tt\t\te\t");
+    fprintf("Z\tY\tt\te\t");
     for j = 0:nPesos-1
         fprintf("n*e*x%d\t", j);
     end
@@ -79,7 +79,7 @@ function [ W, rmse ] = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i)
         for k = 1:nPesos
             fprintf("%6.3f\t", W(k));
         end
-        fprintf("%6.3f\t%d\t%d\t%6.3f", Z, Y, t, errores(j));
+        fprintf("%6.3f\t%d\t%d", Z, Y, t);
         for k = 1:nPesos
             fprintf("\t%6.3f", modificacionesPeso(k));
         end
@@ -87,6 +87,7 @@ function [ W, rmse ] = calcularEpoca(X, W, etiquetas, epsilon, tasa, n, i)
         % Se modifica el peso con las modficiaciones
         W = W - modificacionesPeso;
     end
+    
     rmse = sqrt(sum(errores.^2));
     fprintf("-------------------------------------------------------------------------------------------------\nRMSE = %6.3f\n", rmse);
 end
